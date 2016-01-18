@@ -4,10 +4,11 @@
   "authors": [ "BadMishka LLC" ],
   "tags": [
     "Crypto",
-    "Salsa20",
     "Cryptography",
-    "Spritz",
-    "Security"
+    "Security",
+    "ProtectedMemory",
+    "Salsa20",
+    "Spritz"
   ],
   "projectUrl": "https://github.com/badmishkallc/GoDark",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
