@@ -5,6 +5,7 @@
  - Spritz 
  - ProtectedMemoryBinary
  - ProtectedmemoryString
+ - HMACBlockStream (HashBased = Message Authenticated Code Stream)
 
 ## TODO
  - Link papers
