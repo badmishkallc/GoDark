@@ -1,0 +1,30 @@
+﻿{
+  "version": "0.1.0-*",
+  "description": "GoDark Class Library",
+  "authors": [ "BadMishka LLC" ],
+  "tags": [
+    "Crypto",
+    "Salsa20",
+    "Cryptography",
+    "Spritz",
+    "Security"
+  ],
+  "projectUrl": "https://github.com/badmishkallc/GoDark",
+  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "dependencies": {
+    "BadMishka.BitsAndPieces": "0.1.0"
+  },
+  "frameworks": {
+    "net451": { },
+    "dotnet5.4": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-*",
+        "System.Collections": "4.0.11-*",
+        "System.Linq": "4.0.1-*",
+        "System.Runtime": "4.0.21-*",
+        "System.Threading": "4.0.11-*",
+        "System.Security.Cryptography.Algorithms": "4.0.0-*"
+      }
+    }
+  }
+}
