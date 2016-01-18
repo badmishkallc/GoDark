@@ -7,7 +7,11 @@
  - ProtectedmemoryString
 
 ## TODO
- 
+ - Link papers
+ - Implement Blowfish
+ - Implement Scrypt
+ - Implement Hashed Password Service
+ - Implement PBKDF2PasswordService 
 
 ## License
 
