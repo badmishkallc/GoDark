@@ -109,28 +109,34 @@ namespace BadMishka.Security.Cryptography
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (this.reader == null)
-                throw new InvalidOperationException("MACStream cannot read");
+                throw new InvalidOperationException("HMACStream cannot read");
 
-            if (this.internalBuffer == null)
+            int progress = 0;
+
+            while (progress < count)
             {
-                this.bufferOffset = 0;
-                this.internalBuffer = this.ReadNext();
                 if (this.internalBuffer == null)
-                    return 0;
+                {
+                    this.bufferOffset = 0;
+                    this.internalBuffer = this.ReadNext();
+                    if (this.internalBuffer == null)
+                        return progress;
+                }
+
+                int l = Math.Min(this.internalBuffer.Length - this.bufferOffset, count);
+
+
+                Array.Copy(this.internalBuffer, this.bufferOffset, buffer, offset, l);
+                offset += l;
+                this.bufferOffset += l;
+                progress += l;
+
+
+                if (this.bufferOffset == this.internalBuffer.Length)
+                    this.internalBuffer = null;
             }
 
-            int l = Math.Min(this.internalBuffer.Length - this.bufferOffset, count);
-
-
-            Array.Copy(this.internalBuffer, this.bufferOffset, buffer, offset, l);
-            offset += l;
-            this.bufferOffset += l;
-
-            if (this.bufferOffset == this.internalBuffer.Length)
-                this.internalBuffer = null;
-
-
-            return l;
+            return progress;
         }
 
         private byte[] ReadNext()
@@ -183,7 +189,7 @@ namespace BadMishka.Security.Cryptography
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (this.writer == null)
-                throw new InvalidOperationException($"MACStream cannot write.");
+                throw new InvalidOperationException($"HMACStream cannot write.");
 
             this.writer.Write(this.expectedPosition);
             this.expectedPosition++;
