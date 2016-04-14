@@ -18,7 +18,7 @@
   "projectUrl": "https://github.com/badmishkallc/GoDark",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
   "dependencies": {
-    "BadMishka.BitsAndPieces": "0.1.1"
+    "BadMishka.BitsAndPieces": "0.1.2"
   },
   "frameworks": {
     "net451": { },
