@@ -6,10 +6,11 @@
  - ProtectedMemoryBinary
  - ProtectedmemoryString
  - HMACBlockStream (HashBased = Message Authenticated Code Stream)
+ - Blowfish
 
 ## TODO
  - Link papers
- - Implement Blowfish
+
  - Implement Scrypt
  - Implement Hashed Password Service
  - Implement PBKDF2PasswordService 

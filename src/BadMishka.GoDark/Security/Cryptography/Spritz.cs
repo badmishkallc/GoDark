@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 
 namespace BadMishka.Security.Cryptography
 {
+    /// <summary>
+    /// A stream cipher drop in replacement for RC4 developed by RL Rivest.  
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///     You can find the paper for Spritz from a mit server. 
+    ///     https://people.csail.mit.edu/rivest/pubs/RS14.pdf
+    ///     </para>
+    /// </remarks>
     public class Spritz : SymmetricAlgorithm
     {
         private static readonly KeySizes[] s_legalBlockSizes;

@@ -1,19 +1,24 @@
 ﻿{
-  "version": "0.1.0-*",
-  "description": "GoDark Class Library",
-  "authors": [ "BadMishka LLC" ],
+  "version": "0.1.1-*",
+  "title": "Go Dark",
+  "summary": "GoDark Class Library",
+  "description": "Provides Salsa20, Spritz, and BlowFish encryption. HMACBlockStream that reads/writes blocks of data and their hashes. ProtectedMemoryBinary ",
+  "releaseNotes": "",
+  "owners": [ "Bad Mishka LLC" ],
+  "authors": [ "Bad Mishka LLC" ],
   "tags": [
     "Crypto",
     "Cryptography",
     "Security",
     "ProtectedMemory",
+    "BlowFish",
     "Salsa20",
     "Spritz"
   ],
   "projectUrl": "https://github.com/badmishkallc/GoDark",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
   "dependencies": {
-    "BadMishka.BitsAndPieces": "0.1.0"
+    "BadMishka.BitsAndPieces": "0.1.1"
   },
   "frameworks": {
     "net451": { },

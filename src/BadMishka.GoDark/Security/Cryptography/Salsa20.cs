@@ -29,7 +29,7 @@ namespace BadMishka.Security.Cryptography
 #endif
             this.BlockSize = 64;
             this.KeySize = 256;
-            this.Rounds = Salsa20Rounds.Ten;
+            this.Rounds = Salsa20Rounds.Twenty;
             this.rng = RandomNumberGenerator.Create();
         }
 
