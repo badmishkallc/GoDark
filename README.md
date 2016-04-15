@@ -14,6 +14,10 @@
  - Implement Scrypt
  - Implement Hashed Password Service
  - Implement PBKDF2PasswordService 
+ 
+ ## Contributing
+ - [Code of Conduct](CODE-OF-CONDUCT.md)
+ - [Contributing](CONTRIBUTING.md)
 
 ## License
 

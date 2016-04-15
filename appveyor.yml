@@ -11,3 +11,4 @@ build:
   
 test_script: 
  - ps: .\test.ps1
+ 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BadMishka.Bits;
+using System;
 using System.Security.Cryptography;
 using static BadMishka.Bits.BitHelpers;
 
@@ -16,14 +17,14 @@ namespace BadMishka.Security.Cryptography
 
         static Salsa20()
         {
-           s_legalBlockSizes  = new[] { new KeySizes(64, 64, 0) };
-           s_legalKeySizes = new[] { new KeySizes(128, 256, 128) };
+            s_legalBlockSizes = new[] { new KeySizes(64, 64, 0) };
+            s_legalKeySizes = new[] { new KeySizes(128, 256, 128) };
         }
-       
+
 
         protected Salsa20()
         {
-#if !DOTNET5_4
+#if NET451
             LegalBlockSizesValue = s_legalBlockSizes;
             LegalKeySizesValue = s_legalKeySizes;
 #endif
@@ -35,6 +36,7 @@ namespace BadMishka.Security.Cryptography
 
         public Salsa20Rounds Rounds { get; set; }
 
+        public bool SkipXor { get; set; }
 
         public override KeySizes[] LegalBlockSizes
         {
@@ -61,12 +63,12 @@ namespace BadMishka.Security.Cryptography
 
         public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV)
         {
-            return new Salsa20CryptoTransform(rgbKey, rgbIV, (int)this.Rounds);
+            return new Salsa20CryptoTransform(rgbKey, rgbIV, (int)this.Rounds, this.SkipXor);
         }
 
         public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV)
         {
-            return new Salsa20CryptoTransform(rgbKey, rgbIV, (int)this.Rounds);
+            return new Salsa20CryptoTransform(rgbKey, rgbIV, (int)this.Rounds, this.SkipXor);
         }
 
         public override void GenerateIV()
@@ -95,11 +97,15 @@ namespace BadMishka.Security.Cryptography
             private uint[] reusableBuffer = new uint[16];
             private int rounds = 10;
             private bool isDisposed = false;
+            private bool skipXor = false;
+            private int bytesRemaining = 0;
+            private byte[] internalBuffer = new byte[64];
 
-            public Salsa20CryptoTransform(byte[] key, byte[] iv, int rounds)
+            public Salsa20CryptoTransform(byte[] key, byte[] iv, int rounds, bool skipXor)
             {
                 this.state = CreateState(key, iv);
                 this.rounds = rounds;
+                this.skipXor = skipXor;
             }
 
             public bool CanReuseTransform
@@ -134,7 +140,7 @@ namespace BadMishka.Security.Cryptography
                 }
             }
 
-            
+
 
             private static void AddRotateXor(uint[] state, uint[] buffer, byte[] output, int rounds)
             {
@@ -231,7 +237,7 @@ namespace BadMishka.Security.Cryptography
 
             protected void Dispose(bool isDisposing)
             {
-                if(isDisposing)
+                if (isDisposing)
                 {
                     Array.Clear(this.reusableBuffer, 0, this.reusableBuffer.Length);
                     Array.Clear(this.state, 0, this.state.Length);
@@ -250,22 +256,39 @@ namespace BadMishka.Security.Cryptography
             {
                 this.CheckDisposed();
 
-                byte[] output = new byte[this.OutputBlockSize];
                 int bytesTransformed = 0;
-                int blockSize = 0;
-                while(inputCount > 0)
+                int internalOffset = 0;
+                if (this.bytesRemaining > 0)
+                    internalOffset = 64 - this.bytesRemaining;
+
+
+                while (inputCount > 0)
                 {
-                    AddRotateXor(this.state, this.reusableBuffer, output, this.rounds);
+                    if (this.bytesRemaining == 0)
+                    {
+                        AddRotateXor(this.state, this.reusableBuffer, this.internalBuffer, this.rounds);
+                        bytesRemaining = 64;
+                        internalOffset = 0;
+                    }
 
-                    blockSize = Math.Min(64, inputCount);
+                    var length = Math.Min(bytesRemaining, inputCount);
 
-                    for (int i = 0; i <  blockSize; i++)
-                        outputBuffer[outputOffset + i] = (byte)(inputBuffer[inputOffset + i] ^ output[i]);
 
-                    bytesTransformed += blockSize;
-                    inputCount -= 64;
-					outputOffset += 64;
-					inputOffset += 64;
+                    if (this.skipXor)
+                    {
+                        Array.Copy(this.internalBuffer, internalOffset, outputBuffer, outputOffset, length);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < inputCount; i++)
+                            outputBuffer[outputOffset + i] = (byte)(inputBuffer[inputOffset + i] ^ this.internalBuffer[i]);
+                    }
+
+                    this.bytesRemaining -= length;
+                    bytesTransformed += length;
+                    inputCount -= length;
+                    outputOffset += length;
+                    inputOffset += length;
                 }
 
                 return bytesTransformed;
