@@ -95,6 +95,9 @@ namespace BadMishka.Security.Cryptography
 
             private uint[] p;
             private uint[,] sBox;
+            private int bytesRemaining = 0;
+            private byte[] internalBuffer = new byte[8];
+            private byte[] nextIV = new byte[8];
 
             public BlowFishTransform(byte[] key, byte[] iv, bool encrypt, bool isLittleEndian, CipherMode cipherMode, PaddingMode paddingMode)
             {
@@ -113,8 +116,9 @@ namespace BadMishka.Security.Cryptography
                 this.IsEncryptor = encrypt;
                 this.CipherMode = cipherMode;
                 this.IsLittleEndian = isLittleEndian;
-               
+                this.CipherMode = CipherMode.ECB;
                 this.SetupKey(key);
+                
             }
 
             public bool IsLittleEndian { get; set; }
@@ -172,55 +176,73 @@ namespace BadMishka.Security.Cryptography
                 if (this.disposedValue)
                     throw new ObjectDisposedException(this.GetType().FullName);
 
-                int oLength = outputBuffer.Length,
-                    length = inputCount;
+                int bytesTransformed = 0;
+                int internalOffset = 0;
+                if (this.bytesRemaining > 0)
+                    internalOffset = this.OutputBlockSize - this.bytesRemaining;
 
-                if (length + inputOffset > inputBuffer.Length)
+
+                while (inputCount > 0)
                 {
-                    throw new ArgumentOutOfRangeException("inputBuffer.Length must be equal to or greater than inputCount and inputOffset");
-                }
-
-                if (length + outputOffset > inputBuffer.Length)
-                {
-                    throw new ArgumentOutOfRangeException("inputBuffer.Length must be equal to or greater than inputCount and inputOffset");
-                }
-
-                ThrowIfNotBlockSize(nameof(inputOffset), inputOffset);
-                ThrowIfNotBlockSize(nameof(outputBuffer), outputBuffer.Length);
-                ThrowIfNotBlockSize(nameof(outputOffset), outputOffset);
-
-
-                byte[] input = inputBuffer, output = outputBuffer;
-                int pad = length % 8;
-                if(pad != 0)
-                {
-                    if(inputCount != inputBuffer.Length)
+                    if(this.bytesRemaining == 0)
                     {
-                        throw new ArgumentException("inputCount must be a multiple of 8", nameof(inputCount));
+                        switch (this.CipherMode)
+                        {
+                            case CipherMode.CBC:
+                                this.TransformBlockCbc(inputBuffer, inputOffset, this.internalBuffer,this.IsEncryptor);
+                                break;
+                            case CipherMode.ECB:
+                                this.TransformBlockEcb(inputBuffer, inputOffset, this.internalBuffer, this.IsEncryptor);
+                                break;
+
+                            default:
+                                throw new NotSupportedException($"CipherMode  {this.CipherMode.ToString()} is not supported");
+                        }
+
+                        this.bytesRemaining = this.OutputBlockSize;
+                        internalOffset = 0;
                     }
 
-                    length = length + (8 - pad);
-                    if(inputOffset + length > input.Length)
-                    {
-                        input = new byte[inputOffset + length];
-                        Buffer.BlockCopy(inputBuffer, 0, input, 0, inputBuffer.Length);
-                    }
+                    var length = Math.Min(this.bytesRemaining, inputCount);
+
+                    Buffer.BlockCopy(this.internalBuffer, internalOffset, outputBuffer, outputOffset, length);
+
+                    bytesTransformed += length;
+                    outputOffset += length;
+                    internalOffset += length;
+                    inputOffset += length;
+
+                    this.bytesRemaining -= length;
+                    inputCount -= length;
                 }
 
-                switch(this.CipherMode)
+                switch(this.PaddingMode)
                 {
-                    case CipherMode.CBC:
-                        this.TransformBlockCbc(input, inputOffset, inputCount, outputBuffer, outputOffset, this.IsEncryptor);
+                    case PaddingMode.Zeros:
+                    case PaddingMode.None:
+                        if (!this.IsEncryptor && outputBuffer[outputBuffer.Length - 1] == 0)
+                        {
+                            var l = outputBuffer.Length;
+                            while (l > 0)
+                            {
+                                if (outputBuffer[l - 1] != 0)
+                                {
+                                    bytesTransformed = l;
+                                    break;
+                                }
+
+                                l--;
+                            }
+                        }
                         break;
-                    case CipherMode.ECB:
-                        this.TransformBlockEcb(input, inputOffset, inputCount, outputBuffer, outputOffset, this.IsEncryptor);
-                        break;
+                  
+                    // TODO: handle PKCS7
 
                     default:
-                        throw new NotSupportedException($"CipherMode  {this.CipherMode.ToString()} is not supported");
+                        throw new NotSupportedException($"PaddingMode {this.PaddingMode.ToString()} is not support");
                 }
-
-                return length;
+                
+                return bytesTransformed;
             }
 
             public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
@@ -228,86 +250,51 @@ namespace BadMishka.Security.Cryptography
                 if (this.disposedValue)
                     throw new ObjectDisposedException(this.GetType().FullName);
 
-                int mod = inputCount % 8,
-                    length = (mod == 0 ? inputCount : (inputCount + (8 - mod)));
 
-                byte[] outputBuffer = new byte[length];
-
+                if (this.IsEncryptor && inputCount < this.InputBlockSize)
+                    inputCount = this.InputBlockSize;
+               
+                var outputBuffer = new byte[inputCount];
+                if (outputBuffer.Length == 0)
+                    return outputBuffer;
+                
                 this.TransformBlock(inputBuffer, inputOffset, inputCount, outputBuffer, 0);
-
-                if(!this.IsEncryptor && this.PaddingMode == PaddingMode.None)
-                {
-                    int l = outputBuffer.Length,
-                        i = l - 9,
-                        j = l - 1;
-
-                    for(; j > i; j--)
-                    {
-                        if(outputBuffer[j] != 0)
-                        {
-                            l = j + 1;
-                            break;
-                        }
-                    }
-
-                    var smaller = new byte[l];
-                    Buffer.BlockCopy(outputBuffer, 0, smaller, 0, l);
-                    outputBuffer = smaller;    
-                }
 
                 return outputBuffer;
             }
 
-            private void TransformBlockCbc(byte[] inputBuffer, int inputOffset, int length, byte[] outputBuffer, int outputOffset, bool encrypt)
+            private void TransformBlockCbc(byte[] inputBuffer, int inputOffset, byte[] outputBuffer, bool encrypt)
             {
-                byte[] block = new byte[8];
-                byte[] iv = new byte[8];
-                byte[] nextIV = new byte[8];
+                byte[] iv = this.nextIV;
+             
                 if (encrypt)
                 {
-                    for (var i = 0; i < length; i += 8)
-                    {
-                        Buffer.BlockCopy(inputBuffer, inputOffset + i, block, 0, 8);
-                        XorBlock(block, iv);
-                        EncryptBlock(block, this.p, this.sBox, this.IsLittleEndian);
-                        Buffer.BlockCopy(block, 0, iv, 0, 8);
-                        Buffer.BlockCopy(block, 0, outputBuffer, outputOffset + i, 8);
-                    }
-
-
+                    Buffer.BlockCopy(inputBuffer, inputOffset, outputBuffer, 0, this.InputBlockSize);
+                    XorBlock(outputBuffer, iv);
+                    EncryptBlock(outputBuffer, this.p, this.sBox, this.IsLittleEndian);
+                    Buffer.BlockCopy(outputBuffer, 0, this.nextIV, 0, this.InputBlockSize);
+                       
                     return;
                 }
 
-                for (var i = 0; i < length; i += 8)
-                {
-                    Buffer.BlockCopy(inputBuffer, inputOffset + i, block, 0, 8);
-                    Buffer.BlockCopy(block, 0, nextIV, 0, 8);
-                    DecryptBlock(block, this.p, this.sBox, this.IsLittleEndian);
-                    XorBlock(block, iv);
+                Buffer.BlockCopy(inputBuffer, inputOffset, outputBuffer, 0, this.OutputBlockSize);
+                Buffer.BlockCopy(outputBuffer, 0, this.nextIV, 0, this.OutputBlockSize);
+                DecryptBlock(outputBuffer, this.p, this.sBox, this.IsLittleEndian);
+                XorBlock(outputBuffer, iv);
 
-                    Buffer.BlockCopy(nextIV, 0, iv, 0, 8);
-                    Buffer.BlockCopy(block, 0, outputBuffer, outputOffset + i, 8);
-                }
+                Buffer.BlockCopy(this.nextIV, 0, iv, 0, this.OutputBlockSize);
             }
 
-            private void TransformBlockEcb(byte[] inputBuffer, int inputOffset, int length, byte[] outputBuffer, int outputOffset, bool encrypt)
+            private void TransformBlockEcb(byte[] inputBuffer, int inputOffset,  byte[] outputBuffer, bool encrypt)
             {
-                var block = new byte[8];
-
-                var j = outputOffset;
-                for(var i = inputOffset; i < length; i += 8)
+                Buffer.BlockCopy(inputBuffer, inputOffset, outputBuffer, 0, this.InputBlockSize);
+                if (encrypt)
                 {
-                    Buffer.BlockCopy(inputBuffer, i, block, 0, 8);
-                    if (encrypt)
-                    {
-                        EncryptBlock(block, this.p, this.sBox, this.IsLittleEndian);
-                    }
-                    else
-                    {
-                        DecryptBlock(block, this.p, this.sBox, this.IsLittleEndian);
-                    }
-
-                    Buffer.BlockCopy(block, 0, outputBuffer, outputOffset + i, 8);
+                    EncryptBlock(outputBuffer, this.p, this.sBox, this.IsLittleEndian);
+                }
+                else
+                {
+                    DecryptBlock(outputBuffer, this.p, this.sBox, this.IsLittleEndian);
                 }
             }
 
@@ -479,7 +466,7 @@ namespace BadMishka.Security.Cryptography
 
             #region
 
-            // IMHO this is a better option than making a copy of a static variable.
+            // possibly better  than making a copy of a static variable.
             private static uint[,] GenerateSBox()
             {
                 uint[,] result =  {

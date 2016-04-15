@@ -1,7 +1,9 @@
 ﻿using BadMishka.Security.Cryptography;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -14,7 +16,9 @@ namespace BadMishka.GoDark.Tests.Security.Cryptography
         [Fact]
         public static void Encrypt_And_Decrypt()
         {
+            var utf8 = new UTF8Encoding(false, false);
             var blowFish = BlowFish.Create();
+            blowFish.Mode = CipherMode.CBC;
             blowFish.GenerateIV();
             blowFish.GenerateKey();
 
@@ -23,27 +27,30 @@ namespace BadMishka.GoDark.Tests.Security.Cryptography
 
             var transform = blowFish.CreateEncryptor();
             var testString = "Why I got you on my mind? by Ellie Goulding";
-            var inputBuffer = System.Text.Encoding.UTF8.GetBytes(testString);
 
+            var ms1 = new MemoryStream();
+            using (var cryptoStream = new CryptoStream(ms1, blowFish.CreateEncryptor(key, iv), CryptoStreamMode.Write))
+            using (var sw = new StreamWriter(cryptoStream))
+            {
+                sw.Write(testString);
+            }
 
-            byte[] decryptedBytes = EncryptionUtil.CreateOutputBuffer(inputBuffer, blowFish.BlockSize);
-            byte[] encryptedBytes = EncryptionUtil.CreateOutputBuffer(inputBuffer, blowFish.BlockSize);
-            transform.TransformBlock(inputBuffer, 0, inputBuffer.Length, encryptedBytes, 0);
+            var encryptedBytes = ms1.ToArray();
+            ms1.Dispose();
 
-            Assert.NotEqual(inputBuffer, encryptedBytes);
-            Assert.NotEqual(testString, Encoding.UTF8.GetString(encryptedBytes, 0, encryptedBytes.Length));
+            Assert.NotEqual(testString, utf8.GetString(encryptedBytes));
 
-            blowFish.Padding = System.Security.Cryptography.PaddingMode.None;
-            transform = blowFish.CreateDecryptor();
-            transform.TransformBlock(encryptedBytes, 0, encryptedBytes.Length, decryptedBytes, 0);
+            string decryptedString = null;
 
-           
-            var decrypted = Encoding.UTF8.GetString(decryptedBytes, 0, decryptedBytes.Length).TrimEnd('\0');
-            Assert.Equal(testString, decrypted);
+            using (var ms = new MemoryStream(encryptedBytes))
+            using (var cryptoStream = new CryptoStream(ms, blowFish.CreateDecryptor(key, iv), CryptoStreamMode.Read))
+            using (var sr = new StreamReader(cryptoStream))
+            {
+                decryptedString = sr.ReadToEnd();
+            }
 
-            transform = blowFish.CreateDecryptor();
-            decryptedBytes = transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-            Assert.Equal(inputBuffer, decryptedBytes);
+            Assert.NotNull(decryptedString);
+            Assert.Equal(testString, decryptedString);
         }
     }
 }
