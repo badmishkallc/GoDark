@@ -280,7 +280,7 @@ namespace BadMishka.Security.Cryptography
                     }
                     else
                     {
-                        for (int i = 0; i < inputCount; i++)
+                        for (int i = 0; i < length; i++)
                             outputBuffer[outputOffset + i] = (byte)(inputBuffer[inputOffset + i] ^ this.internalBuffer[i]);
                     }
 
