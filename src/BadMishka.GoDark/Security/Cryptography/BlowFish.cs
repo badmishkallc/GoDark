@@ -118,7 +118,6 @@ namespace BadMishka.Security.Cryptography
                 this.IsLittleEndian = isLittleEndian;
                 this.CipherMode = CipherMode.ECB;
                 this.SetupKey(key);
-                
             }
 
             public bool IsLittleEndian { get; set; }
@@ -250,7 +249,7 @@ namespace BadMishka.Security.Cryptography
                 if (this.disposedValue)
                     throw new ObjectDisposedException(this.GetType().FullName);
 
-
+                 
                 if (this.IsEncryptor && inputCount < this.InputBlockSize)
                     inputCount = this.InputBlockSize;
                

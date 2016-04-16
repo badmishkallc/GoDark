@@ -1,7 +1,8 @@
-# GoDark
-.NET Cryptography Library.  (Supports CoreClr, DNX)
+![Go Dark](docs/images/go-dark-64.png)
 
- - Salsa20
+.NET Cryptography Library built on CoreClr
+
+ - Salsa20 with variations (8, 10, 12, 20)
  - Spritz 
  - ProtectedMemoryBinary
  - ProtectedmemoryString
@@ -10,14 +11,17 @@
 
 ## TODO
  - Link papers
-
- - Implement Scrypt
+ - Implement Scrypt, TwoFish, ThreeFish, Serpent
  - Implement Hashed Password Service
  - Implement PBKDF2PasswordService 
  
- ## Contributing
+## Contributing
  - [Code of Conduct](CODE-OF-CONDUCT.md)
  - [Contributing](CONTRIBUTING.md)
+ 
+## Project Repos
+ - [Gitlab](https://gitlab.com/badmishkallc/GoDark.git) (Primary)
+ - [Github](https://github.com/badmishkallc/GoDark.git)
 
 ## License
 
@@ -34,3 +38,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+   
+## Logo
+
+Spy graphic by <a href="http://www.freepik.com/">Freepik</a> from <a href="http://www.flaticon.com/">Flaticon</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>. Made with <a href="http://logomakr.com" title="Logo Maker">Logo Maker</a>
