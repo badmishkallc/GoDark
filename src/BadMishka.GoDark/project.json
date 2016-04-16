@@ -1,7 +1,7 @@
 ﻿{
   "version": "0.1.1-*",
   "title": "Go Dark",
-  "summary": "GoDark Class Library",
+  "summary": ".NET Cryptography Library built on CoreClr",
   "description": "Provides Salsa20, Spritz, and BlowFish encryption. HMACBlockStream that reads/writes blocks of data and their hashes. ProtectedMemoryBinary ",
   "releaseNotes": "",
   "owners": [ "Bad Mishka LLC" ],
@@ -15,7 +15,8 @@
     "Salsa20",
     "Spritz"
   ],
-  "projectUrl": "https://github.com/badmishkallc/GoDark",
+  "iconUrl": "https://raw.githubusercontent.com/badmishkallc/GoDark/master/docs/images/go-dark-128.png",
+  "projectUrl": "https://gitlab.com/badmishkallc/GoDark.git",
   "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
   "dependencies": {
     "BadMishka.BitsAndPieces": "0.1.2"
