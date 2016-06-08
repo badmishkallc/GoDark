@@ -16,6 +16,6 @@ artifacts:
 - path: 'artifacts\**\*.nupkg'
   name: nuget package
 test_script: 
-- ps: .\test.ps1
+- ps: .\build\test.ps1
 deploy_script:
-- ps: .\deploy.ps1
+- ps: .\build\deploy.ps1
