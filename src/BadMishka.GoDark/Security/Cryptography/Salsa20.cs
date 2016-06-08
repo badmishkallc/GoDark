@@ -24,7 +24,7 @@ namespace BadMishka.Security.Cryptography
 
         protected Salsa20()
         {
-#if NET451
+#if !NETCOREAPP
             LegalBlockSizesValue = s_legalBlockSizes;
             LegalKeySizesValue = s_legalKeySizes;
 #endif

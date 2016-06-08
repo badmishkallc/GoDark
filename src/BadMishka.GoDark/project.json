@@ -1,38 +1,52 @@
 ﻿{
-  "version": "0.2.0-alpha-*",
-  "title": "Go Dark",
-  "summary": ".NET Cryptography Library built on CoreClr",
-  "description": "Provides Salsa20, Spritz, and BlowFish encryption. HMACBlockStream that reads/writes blocks of data and their hashes. ProtectedMemoryBinary ",
-  "releaseNotes": "",
-  "owners": [ "Bad Mishka LLC" ],
-  "authors": [ "Bad Mishka LLC" ],
-  "tags": [
-    "Crypto",
-    "Cryptography",
-    "Security",
-    "ProtectedMemory",
-    "BlowFish",
-    "Salsa20",
-    "Spritz"
-  ],
-  "iconUrl": "https://raw.githubusercontent.com/badmishkallc/GoDark/master/docs/images/go-dark-128.png",
-  "projectUrl": "https://gitlab.com/badmishkallc/GoDark.git",
-  "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+  "version": "0.2.9-alpha-*",
+  "title": "", 
   "dependencies": {
-    "BadMishka.BitsAndPieces": "0.2.0-alpha-*"
+    "NETStandard.Library": "1.5.0-rc2-24027",
+    "BadMishka.BitsAndPieces": "0.2.9-*"
+  },
+  "packOptions": {
+    "summary": ".NET Cryptography Library built on CoreClr",
+    "description": "Provides Salsa20, Spritz, and BlowFish encryption. HMACBlockStream that reads/writes blocks of data and their hashes. ProtectedMemoryBinary ",
+    "releaseNotes": "",
+    "owners": [ "Bad Mishka LLC" ],
+    "authors": [ "Bad Mishka LLC" ],
+    "tags": [
+      "Crypto",
+      "Cryptography",
+      "Security",
+      "ProtectedMemory",
+      "BlowFish",
+      "Salsa20",
+      "Spritz"
+    ],
+    "iconUrl": "https://raw.githubusercontent.com/badmishkallc/GoDark/master/docs/images/go-dark-128.png",
+    "projectUrl": "https://gitlab.com/badmishkallc/GoDark.git",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "requireLicenseAcceptance": false
+  },
+  "buildOptions": {
+    "allowUnsafe": true
   },
   "frameworks": {
-    "net451": { },
-    "dotnet5.4": {
+    "net451": {
+
+    },
+    "net46": {
+
+    },
+    "netcoreapp1.0": {
+      "buildOptions": {"define": ["NETCOREAPP"]},
       "dependencies": {
-        "Microsoft.CSharp": "4.0.1-*",
-        "System.Collections": "4.0.11-*",
-        "System.Linq": "4.0.1-*",
-        "System.Runtime": "4.0.21-*",
-        "System.Threading": "4.0.11-*",
-        "System.Text.Encoding.Extensions": "4.0.11-beta-23516",
-        "System.Security.Cryptography.Algorithms": "4.0.0-*"
-      }
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0-rc2-3002702"
+        }
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
     }
   }
 }

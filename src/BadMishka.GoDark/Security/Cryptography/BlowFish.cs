@@ -38,7 +38,7 @@ namespace BadMishka.Security.Cryptography
 
         protected BlowFish()
         {
-#if !DOTNET5_4
+#if !NETCOREAPP
             LegalBlockSizesValue = s_legalBlockSizes;
             LegalKeySizesValue = s_legalKeySizes;
 #endif
@@ -47,6 +47,22 @@ namespace BadMishka.Security.Cryptography
             this.rng = RandomNumberGenerator.Create();
             this.Padding = PaddingMode.Zeros;
             this.IsLittleEndian = BitConverter.IsLittleEndian;
+        }
+
+        public override KeySizes[] LegalBlockSizes
+        {
+            get
+            {
+                return s_legalBlockSizes;
+            }
+        }
+
+        public override KeySizes[] LegalKeySizes
+        {
+            get
+            {
+                return s_legalKeySizes;
+            }
         }
 
         public bool IsLittleEndian { get; set; }

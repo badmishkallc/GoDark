@@ -1,25 +1,17 @@
-version: 0.2.0-alpha.{build}
+version: 0.2.9-alpha.{build}
 os: Visual Studio 2015
 environment:
   global:
     api_key:
       secure: qlFhQA71WGw22mjjgFbj9e3MHTl0K3LRMlacBZWC6Eiqy85bAE0YGo+v/VM3wB5Y
 install:
-- dnvm install 1.0.0-rc1-update1
-- dnvm use 1.0.0-rc1-update1
-- dnu restore
-before_build:
-- ps: >-
-    if($env:APPVEYOR_REPO_BRANCH -eq "dev") {
-       $env:DNX_BUILD_VERSION = "$env:APPVEYOR_BUILD_NUMBER"
-       set DNX_BUILD_VERSION="$env:APPVEYOR_BUILD_NUMBER"
-       $v = "$env:APPVEYOR_BUILD_NUMBER".PadRight(18)
-       Write-Host "---------------------------"
-       Write-Host "| "-$v"     |"
-       Write-Host "---------------------------"
-    }
-build:
-  verbosity: minimal
+- ps: .\build\install-dotnet.ps1
+- dotnet restore
+build_script:
+- ps: dotnet restore .\src\BadMishka.GoDark\project.json 
+- ps: dotnet restore .\test\BadMishka.GoDark.Tests\project.json
+- ps: dotnet build .\test\BadMishka.GoDark.Tests\project.json -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
+- ps: dotnet pack .\src\BadMishka.GoDark\project.json -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
 artifacts:
 - path: 'artifacts\**\*.nupkg'
   name: nuget package

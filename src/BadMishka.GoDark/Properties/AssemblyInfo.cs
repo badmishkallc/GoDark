@@ -1,20 +1,14 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BadMishka.GoDark")]
-[assembly: AssemblyDescription(".NET Cryptography Implementations")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("BadMishka LLC")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("BadMishka.GoDark")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: CLSCompliant(true)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -22,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8c32cdd2-4878-47ca-a593-df7b99dbd98e")]
+[assembly: Guid("e38012cf-bbfb-4b2e-b98e-f6bcabe80948")]

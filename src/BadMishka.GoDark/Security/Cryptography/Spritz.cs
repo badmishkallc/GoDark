@@ -29,7 +29,7 @@ namespace BadMishka.Security.Cryptography
 
         protected Spritz()
         {
-#if !DOTNET5_4
+#if !NETCOREAPP
             LegalBlockSizesValue = s_legalBlockSizes;
             LegalKeySizesValue = s_legalKeySizes;
 #endif
