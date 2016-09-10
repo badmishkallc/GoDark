@@ -2,7 +2,7 @@
   "version": "0.2.9-alpha-*",
   "title": "", 
   "dependencies": {
-    "NETStandard.Library": "1.5.0-rc2-24027",
+    "NETStandard.Library": "1.6.0",
     "BadMishka.BitsAndPieces": "0.2.9-*"
   },
   "packOptions": {
@@ -20,7 +20,7 @@
       "Salsa20",
       "Spritz"
     ],
-    "iconUrl": "https://raw.githubusercontent.com/badmishkallc/GoDark/master/docs/images/go-dark-128.png",
+    "iconUrl": "https://gitlab.com/badmishkallc/GoDark/blob/7a152195f8e5d6d2198bc4ed9c290063a5510a6b/docs/images/go-dark-128.png",
     "projectUrl": "https://gitlab.com/badmishkallc/GoDark.git",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
     "requireLicenseAcceptance": false
@@ -40,7 +40,7 @@
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
-          "version": "1.0.0-rc2-3002702"
+          "version": "1.0.0"
         }
       },
       "imports": [

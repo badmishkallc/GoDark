@@ -3,7 +3,7 @@ os: Visual Studio 2015
 environment:
   global:
     api_key:
-      secure: qlFhQA71WGw22mjjgFbj9e3MHTl0K3LRMlacBZWC6Eiqy85bAE0YGo+v/VM3wB5Y
+      secure: ctO8SSBk8Mz45RIZ0x2/t3JSPLqr2UjD/u17pP4eLc9yCgY0KbIU0Mt1Aq1fhXvN
 install:
 - ps: .\build\install-dotnet.ps1
 - dotnet restore

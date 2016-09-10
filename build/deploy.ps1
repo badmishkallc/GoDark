@@ -6,6 +6,6 @@ foreach($item in $items) {
         continue;     
     } 
     $pkg = $item.FullName
-    $server = "https://www.myget.org/F/badmishka-dev/api/v2/package";
+    $server = "https://www.myget.org/F/badmishka-coreclr/api/v2/package";
     nuget push $pkg -ApiKey ($env:api_key)  -Source $server  
 }
