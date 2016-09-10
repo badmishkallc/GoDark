@@ -20,7 +20,7 @@
       "Salsa20",
       "Spritz"
     ],
-    "iconUrl": "https://gitlab.com/badmishkallc/GoDark/blob/7a152195f8e5d6d2198bc4ed9c290063a5510a6b/docs/images/go-dark-128.png",
+    "iconUrl": "https://gitlab.com/badmishkallc/GoDark/raw/7a152195f8e5d6d2198bc4ed9c290063a5510a6b/docs/images/go-dark-128.png",
     "projectUrl": "https://gitlab.com/badmishkallc/GoDark.git",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
     "requireLicenseAcceptance": false
