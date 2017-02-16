@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "BadMishka.GoDark", "src\BadMishka.GoDark\BadMishka.GoDark.xproj", "{E38012CF-BBFB-4B2E-B98E-F6BCABE80948}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadMishka.GoDark", "src\BadMishka.GoDark\BadMishka.GoDark.csproj", "{E38012CF-BBFB-4B2E-B98E-F6BCABE80948}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "BadMishka.GoDark.Tests", "test\BadMishka.GoDark.Tests\BadMishka.GoDark.Tests.xproj", "{0419C40B-07C2-4FE3-A1C0-AAFE7F519433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BadMishka.GoDark.Tests", "test\BadMishka.GoDark.Tests\BadMishka.GoDark.Tests.csproj", "{0419C40B-07C2-4FE3-A1C0-AAFE7F519433}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

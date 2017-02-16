@@ -29,7 +29,7 @@ namespace BadMishka.Security.Cryptography
             using (var sha512 = SHA512.Create())
             {
                 var hashBytes = sha512.ComputeHash(binary);
-                this.hashCode = MurMurHash3.Hash32(hashBytes, 20);
+                this.hashCode = MurMurHash3.ComputeHash(hashBytes, 20);
             }
         }
 
@@ -44,7 +44,7 @@ namespace BadMishka.Security.Cryptography
 
             this.text = value;
             this.length = value.Length;
-            this.hashCode = MurMurHash3.Hash32(utf8.GetBytes(value), 20);
+            this.hashCode = MurMurHash3.ComputeHash(utf8.GetBytes(value), 20);
         }
 
         public override int Length
@@ -69,7 +69,7 @@ namespace BadMishka.Security.Cryptography
 
            
             var result = utf8.GetString(binary, 0, this.Length);
-            this.hashCode = MurMurHash3.Hash32(binary, 20);
+            this.hashCode = MurMurHash3.ComputeHash(binary, 20);
             Array.Clear(binary, 0, binary.Length);
 
             this.text = result;

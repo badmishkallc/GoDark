@@ -100,7 +100,7 @@ namespace BadMishka.Security.Cryptography
 
         protected int CreateHashCode(int seed)
         {
-            return MurMurHash3.Hash32(this.hashBytes, seed);
+            return MurMurHash3.ComputeHash(this.hashBytes, seed);
         }
 
         

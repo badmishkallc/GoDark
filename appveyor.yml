@@ -1,5 +1,5 @@
-version: 0.2.9-alpha.{build}
-os: Visual Studio 2015
+version: 0.3.0-alpha.{build}
+os: Visual Studio 2017 RC
 environment:
   global:
     api_key:
@@ -8,10 +8,10 @@ install:
 - ps: .\build\install-dotnet.ps1
 - dotnet restore
 build_script:
-- ps: dotnet restore .\src\BadMishka.GoDark\project.json 
-- ps: dotnet restore .\test\BadMishka.GoDark.Tests\project.json
-- ps: dotnet build .\test\BadMishka.GoDark.Tests\project.json -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
-- ps: dotnet pack .\src\BadMishka.GoDark\project.json -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
+- ps: dotnet restore .\src\BadMishka.GoDark\BadMishka.GoDark.csproj
+- ps: dotnet restore .\test\BadMishka.GoDark.Tests\BadMishka.GoDark.Tests.csproj
+- ps: dotnet build .\test\BadMishka.GoDark.Tests\BadMishka.GoDark.Tests.csproj -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
+- ps: dotnet pack .\src\BadMishka.GoDark\BadMishka.GoDark.csproj -c Release --version-suffix $env:APPVEYOR_BUILD_NUMBER
 artifacts:
 - path: 'artifacts\**\*.nupkg'
   name: nuget package
