@@ -27,6 +27,9 @@ namespace BadMishka.Security.Cryptography
             s_legalKeySizes = new[] { new KeySizes(8, 128, 8) };
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="Spritz"/>
+        /// </summary>
         protected Spritz()
         {
 #if !NETCOREAPP
@@ -60,27 +63,49 @@ namespace BadMishka.Security.Cryptography
             }
         }
 
+        /// <summary>
+        /// Creates a symmetric decryptor object with the <paramref name="rgbKey"/> and initialization vector <paramref name="rgbIV"/>.
+        /// </summary>
+        /// <param name="rgbKey">The secret key to use for the symmetric algorithm.</param>
+        /// <param name="rgbIV">The initializeation vector to use for the symmetric algorithm.</param>
+        /// <returns>A symmetric decryptor object.</returns>
         public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV)
         {
             return new SpritzCryptoTransform(this.BlockSize, rgbKey, rgbIV, true);
         }
 
+        /// <summary>
+        /// Creates a symmetric encryptor object with the <paramref name="rgbKey"/> and initialization vector <paramref name="rgbIV"/>.
+        /// </summary>
+        /// <param name="rgbKey">The secret key to use for the symmetric algorithm.</param>
+        /// <param name="rgbIV">The initializeation vector to use for the symmetric algorithm.</param>
+        /// <returns>A symmetric encryptor object.</returns>
         public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV)
         {
             return new SpritzCryptoTransform(this.BlockSize, rgbKey, rgbIV, false);
         }
 
+        /// <summary>
+        /// Generates a value for the initalization vector property <see cref="System.Security.Cryptography.SymmetricAlgorithm.IV"/>
+        /// </summary>
         public override void GenerateIV()
         {
             this.IV = GetRandomBytes(rng, this.BlockSize / 8);
         }
 
+        /// <summary>
+        /// Generates a value for the secret key property <see cref="System.Security.Cryptography.SymmetricAlgorithm.Key"/>
+        /// </summary>
         public override void GenerateKey()
         {
             this.Key = GetRandomBytes(this.rng, this.KeySize / 8);
         }
 
 #pragma warning disable CS0109
+        /// <summary>
+        /// Creates a new instance of <see cref="BadMishka.Security.Cryptography.Spritz" />
+        /// </summary>
+        /// <returns>A new instance of <see cref="Spritz"/></returns>
         public static new Spritz Create()
         {
             return new Spritz();

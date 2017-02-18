@@ -12,6 +12,11 @@ namespace BadMishka.Security.Cryptography
         private static object s_syncLock = new object();
         private static RandomNumberGenerator s_rng = RandomNumberGenerator.Create();
 
+
+        /// <summary>
+        /// Generates a unique id.
+        /// </summary>
+        /// <returns>A unique id</returns>
         public static byte[] GenerateId()
         {
             lock(s_syncLock)
@@ -31,11 +36,21 @@ namespace BadMishka.Security.Cryptography
             
         }
 
+        /// <summary>
+        /// Converts the bytes to a 32 bit unsigned integer.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns>a unsigned integer value.</returns>
         public static uint ToUInt32(this byte[] bytes)
         {
             return BitConverter.ToUInt32(bytes, 0);
         }
 
+        /// <summary>
+        /// Converts the bytes to a 32 bit unsigned integer.
+        /// </summary>
+        /// <param name="bytes">The index that a read should be started from.</param>
+        /// <returns>a unsigned integer value.</returns>
         public static uint ToUInt32(this byte[] bytes, int startIndex)
         {
             return BitConverter.ToUInt32(bytes, startIndex);

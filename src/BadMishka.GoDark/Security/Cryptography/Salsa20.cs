@@ -22,6 +22,9 @@ namespace BadMishka.Security.Cryptography
         }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="Salsa20"/>
+        /// </summary>
         protected Salsa20()
         {
 #if !NETCOREAPP
@@ -34,10 +37,19 @@ namespace BadMishka.Security.Cryptography
             this.rng = RandomNumberGenerator.Create();
         }
 
+        /// <summary>
+        /// Gets or sets the number of rounds that should be used.
+        /// </summary>
         public Salsa20Rounds Rounds { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether or skip a XOR operation during the transform block 
+        /// </summary>
         public bool SkipXor { get; set; }
 
+        /// <summary>
+        /// Gets the block sizes, in bits, that are supported by the symmetric algorithm.
+        /// </summary>
         public override KeySizes[] LegalBlockSizes
         {
             get
@@ -46,6 +58,9 @@ namespace BadMishka.Security.Cryptography
             }
         }
 
+        /// <summary>
+        /// Gets the key sizes, in bits, that are supported by the symmetric algorithm.
+        /// </summary>
         public override KeySizes[] LegalKeySizes
         {
             get
@@ -55,17 +70,33 @@ namespace BadMishka.Security.Cryptography
         }
 
 #pragma warning disable CS0109
+        /// <summary>
+        /// Creates a new instance of <see cref="BadMishka.Security.Cryptography.Salsa20" />
+        /// </summary>
+        /// <returns>A new instance of <see cref="Salsa20"/></returns>
         public static new Salsa20 Create()
         {
             return new Salsa20();
         }
-#pragma warning restore  CS0109
+#pragma warning restore CS0109
 
+        /// <summary>
+        /// Creates a symmetric decryptor object with the <paramref name="rgbKey"/> and initialization vector <paramref name="rgbIV"/>.
+        /// </summary>
+        /// <param name="rgbKey">The secret key to use for the symmetric algorithm.</param>
+        /// <param name="rgbIV">The initializeation vector to use for the symmetric algorithm.</param>
+        /// <returns>A symmetric decryptor object.</returns>
         public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV)
         {
             return new Salsa20CryptoTransform(rgbKey, rgbIV, (int)this.Rounds, this.SkipXor);
         }
 
+        /// <summary>
+        /// Creates a symmetric encryptor object with the <paramref name="rgbKey"/> and initialization vector <paramref name="rgbIV"/>.
+        /// </summary>
+        /// <param name="rgbKey">The secret key to use for the symmetric algorithm.</param>
+        /// <param name="rgbIV">The initializeation vector to use for the symmetric algorithm.</param>
+        /// <returns>A symmetric encryptor object.</returns>
         public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV)
         {
             return new Salsa20CryptoTransform(rgbKey, rgbIV, (int)this.Rounds, this.SkipXor);

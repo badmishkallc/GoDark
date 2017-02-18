@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BadMishka.Security.Cryptography
 {
     /// <summary>
-    /// 
+    /// Encrypts binary data that is stored in memory.
     /// </summary>
     /// <remarks>
     ///     <para>
@@ -24,14 +24,22 @@ namespace BadMishka.Security.Cryptography
         private int hashCode = -1;
 
         /// <summary>
-        /// 
+        /// The unique id for this object.
         /// </summary>
         public byte[] Id { get { return this.id; } }
 
+
+        /// <summary>
+        /// Is the data protected?
+        /// </summary>
         public bool IsProtected { get; protected set; }
 
         private DataProtectionAction Action { get; set; }
 
+        /// <summary>
+        /// Gets or sets the DataPortectionAction, the default implementation uses <see cref="BadMishka.Security.Cryptography.Salsa20"/>,
+        /// however this can be replaced with <see cref="System.Security.Cryptography.ProtectedMemory.ProtectedMemory"/>
+        /// </summary>
         public static DataProtectionAction DataProtectionAction { get; set; }
 
         public virtual int Length
@@ -60,11 +68,19 @@ namespace BadMishka.Security.Cryptography
             };
         }
         
+        /// <summary>
+        /// Initializes a new instance of <see cref="ProtectedMemoryBinary"/>
+        /// </summary>
         public ProtectedMemoryBinary()
         {
             this.id = Util.GenerateId();
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="ProtectedMemoryBinary"/>
+        /// </summary>
+        /// <param name="binary">The binary data that will be protected</param>
+        /// <param name="encrypt">should the binary data be encrypted or not.</param>
         public ProtectedMemoryBinary(byte[] binary, bool encrypt = true)
             : this()
         {
@@ -87,6 +103,10 @@ namespace BadMishka.Security.Cryptography
                 this.binary = binary;
         }
 
+        /// <summary>
+        /// Gets a hash code for this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
             if (this.disposedValue)
@@ -98,13 +118,20 @@ namespace BadMishka.Security.Cryptography
             return this.hashCode;  
         }
 
+        /// <summary>
+        /// Creates a hashcode for this object.
+        /// </summary>
+        /// <param name="seed">The initial prime number.</param>
+        /// <returns>The hash code.</returns>
         protected int CreateHashCode(int seed)
         {
             return MurMurHash3.ComputeHash(this.hashBytes, seed);
         }
 
-        
-       
+        /// <summary>
+        /// Decrypts the inner data and returns a copy.
+        /// </summary>
+        /// <returns>Returns a copy of the data.</returns>
         public virtual byte[] UnprotectAndCopyData()
         {
             if (this.disposedValue)
@@ -125,6 +152,11 @@ namespace BadMishka.Security.Cryptography
             return copy;
         }
 
+        /// <summary>
+        /// Determines if the given object is equal to the current instance.
+        /// </summary>
+        /// <param name="other">That object to compare.</param>
+        /// <returns>True if the objects are equal; otherwise, false.</returns>
         public bool Equals(ProtectedMemoryBinary other)
         {
             if (this.disposedValue)

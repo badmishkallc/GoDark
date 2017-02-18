@@ -25,12 +25,24 @@ namespace BadMishka.Security.Cryptography
         private bool disposed;
         private int bufferOffset = 0;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="BadMishka.Security.Cryptography.HMACBlockStream"/>
+        /// </summary>
+        /// <param name="innerStream">The stream that will be read or written to.</param>
+        /// <param name="write">If true, the stream will be written to; othewise, read from.</param>
         public HMACBlockStream(Stream innerStream, bool write = true)
             :this(innerStream, write, new System.Text.UTF8Encoding(false, false), null)
         {
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="BadMishka.Security.Cryptography.HMACBlockStream"/>
+        /// </summary>
+        /// <param name="innerStream">The stream that will be read or written to.</param>
+        /// <param name="write">If true, the stream will be written to; othewise, read from.</param>
+        /// <param name="encoding">The encoding that the stream should use.</param>
+        /// <param name="hashFactory">The <see cref="System.Security.Cryptography.HashAlgorithm"/> that should be used to verify the enncrypted data.</param>
         public HMACBlockStream(Stream innerStream, bool write, Encoding encoding, Func<HashAlgorithm> hashFactory)
         {
             if (innerStream == null)
@@ -55,38 +67,29 @@ namespace BadMishka.Security.Cryptography
             this.hashFactory = hashFactory;
         }
 
-        public override bool CanRead
-        {
-            get
-            {
-                return this.reader != null;
-            }
-        }
+        /// <summary>
+        /// Gets if consumers of this stream can read from it.
+        /// </summary>
+        public override bool CanRead => this.writer == null;
 
-        public override bool CanSeek
-        {
-            get
-            {
-                return false;
-            }
-        }
+        /// <summary>
+        /// Gets if the consumers of this stream can seek. Always False.
+        /// </summary>
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get
-            {
-                return this.writer != null;
-            }
-        }
+        /// <summary>
+        /// Gets if consumers of this stream can write to it.
+        /// </summary>
+        public override bool CanWrite  => this.writer != null;
 
-        public override long Length
-        {
-            get
-            {
-                return this.innerStream.Length;
-            }
-        }
+        /// <summary>
+        /// Gets
+        /// </summary>
+        public override long Length => this.innerStream.Length;
 
+        /// <summary>
+        /// Gets the current position of the stream. 
+        /// </summary>
         public override long Position
         {
             get
@@ -99,13 +102,23 @@ namespace BadMishka.Security.Cryptography
                 throw new NotSupportedException();
             }
         }
-
+        
+        /// <summary>
+        /// Flushes the write stream, if there is one.
+        /// </summary>
         public override void Flush()
         {
             if (this.writer != null)
                 this.writer.Flush();
         }
 
+        /// <summary>
+        /// Reads a give number of bytes (<paramref name="count"/>) starting at the given <paramref name="offset"/>.
+        /// </summary>
+        /// <param name="buffer">The buffer that filled with bytes.</param>
+        /// <param name="offset">The offset from the position of the stream</param>
+        /// <param name="count">The number of bytes to read to the buffer.</param>
+        /// <returns>The number of bytes read.</returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (this.reader == null)
@@ -176,16 +189,32 @@ namespace BadMishka.Security.Cryptography
             return decryptedBytes;
         }
 
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <param name="offset"> Not supported.</param>
+        /// <param name="origin"> Not supported.</param>
+        /// <returns></returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Not supported
+        /// </summary>
+        /// <param name="value"> Not supported.</param>
         public override void SetLength(long value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Writes the number of bytes from the buffer at the specified offset.
+        /// </summary>
+        /// <param name="buffer">That data to write to the stream.</param>
+        /// <param name="offset">The offset from the position of the inner stream.</param>
+        /// <param name="count">The number of bytes that should be written.</param>
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (this.writer == null)
@@ -208,6 +237,10 @@ namespace BadMishka.Security.Cryptography
             this.writer.Write(bytes);
         }
 
+        /// <summary>
+        /// Disposes the object.
+        /// </summary>
+        /// <param name="disposing">Determines if the object is disposed manually or gced.</param>
         protected override void Dispose(bool disposing)
         {
             if (this.disposed)
@@ -236,6 +269,9 @@ namespace BadMishka.Security.Cryptography
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Writes the end of the stream.
+        /// </summary>
         protected virtual void WriteEndOfStream()
         {
             this.writer.Write(this.expectedPosition);

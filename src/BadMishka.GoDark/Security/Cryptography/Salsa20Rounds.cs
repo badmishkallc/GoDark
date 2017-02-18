@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace BadMishka.Security.Cryptography
 {
+    /// <summary>
+    /// The number of rounds that Salsa can perform
+    /// </summary>
     public enum Salsa20Rounds
     {
         Eight = 8,
