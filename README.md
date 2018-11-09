@@ -1,5 +1,7 @@
 ![Go Dark](docs/images/go-dark-64.png)
 
+moved to: https://gitlab.com/nerdymishka/gainz/tree/master/dotnet/src/GoDark
+
 .NET Cryptography Library built on CoreClr
 
  - Salsa20 with variations (8, 10, 12, 20)
